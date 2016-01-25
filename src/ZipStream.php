@@ -70,7 +70,7 @@ use brokencube\ZipStream\Exception as Ex;
  */
 class ZipStream {
 	const VERSION = '0.1.0';
-	const ZIP_VERSION = 0x000A;
+	const ZIP_VERSION = 0x002D;
 
 	const METHOD_STORE = 0x00;
 	const METHOD_DEFLATE = 0x08;
@@ -846,16 +846,32 @@ class ZipStream {
 			$comment = $opt['comment'];
 		}
 		
-		$fields = [
-			['V', static::CDR_EOF_SIGNATURE], 	// end of central file header signature
-			['v', 0x00], 						// disk number
-			['v', 0x00], 						// no of disks
-			['v', $num],						// no of entries on disk
-			['v', $num],						// no of entries in cdr
-			['V', $cdr_len],					// CDR size
-			['V', $cdr_ofs],					// CDR offset
-			['v', strlen($comment)],			// Zip Comment size
-		];
+		if ($this->opt[static::OPTION_USE_ZIP64])
+		{
+			$fields = [
+				['V', static::CDR_EOF_SIGNATURE], 	// end of central file header signature
+				['v', 0x00], 						// disk number
+				['v', 0x00], 						// no of disks
+				['v', $num],						// no of entries on disk
+				['v', $num],						// no of entries in cdr
+				['V', 0xFFFFFFFF],					// CDR size (Force to 0xFFFFFFFF for Zip64)
+				['V', 0xFFFFFFFF],					// CDR offset (Force to 0xFFFFFFFF for Zip64)
+				['v', strlen($comment)],			// Zip Comment size
+			];			
+		}
+		else
+		{
+			$fields = [
+				['V', static::CDR_EOF_SIGNATURE], 	// end of central file header signature
+				['v', 0x00], 						// disk number
+				['v', 0x00], 						// no of disks
+				['v', $num],						// no of entries on disk
+				['v', $num],						// no of entries in cdr
+				['V', $cdr_len],					// CDR size
+				['V', $cdr_ofs],					// CDR offset
+				['v', strlen($comment)],			// Zip Comment size
+			];
+		}
 		
 		$ret = $this->packFields($fields) . $comment;
 		$this->send($ret);
