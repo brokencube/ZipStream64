@@ -719,7 +719,7 @@ class ZipStream {
 				['V', static::CDR_FILE_SIGNATURE],		// Central file header signature
 				['v', static::ZIP_VERSION],				// Made by version
 				['v', static::ZIP_VERSION],				// Extract by version
-				['v', 0x00],							// General purpose bit flag
+				['v', 0b00001000],						// General purpose bit flags - data descriptor flag set
 				['v', $meth],							// Compression method
 				['V', $time],							// Timestamp (DOS Format)
 				['V', $crc],							// CRC32
@@ -749,7 +749,7 @@ class ZipStream {
 				['V', static::CDR_FILE_SIGNATURE],		// Central file header signature
 				['v', static::ZIP_VERSION],				// Made by version
 				['v', static::ZIP_VERSION],				// Extract by version
-				['v', 0x00],							// General purpose bit flag
+				['v', 0b00001000],						// General purpose bit flags - data descriptor flag set
 				['v', $meth],							// Compression method
 				['V', $time],							// Timestamp (DOS Format)
 				['V', $crc],							// CRC32
