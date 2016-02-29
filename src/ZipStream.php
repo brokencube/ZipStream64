@@ -69,8 +69,9 @@ use brokencube\ZipStream\Exception as Ex;
  *   $zip->finish();
  */
 class ZipStream {
-	const VERSION = '0.1.0';
-	const ZIP_VERSION = 0x002D;
+	const VERSION = '0.2.0';
+	const ZIP_VERSION = 0x000A;	
+	const ZIP_VERSION_64 = 0x002D;
 
 	const METHOD_STORE = 0x00;
 	const METHOD_DEFLATE = 0x08;
@@ -486,7 +487,7 @@ class ZipStream {
 			$fields = [
 				// Header
 				['V', static::FILE_HEADER_SIGNATURE],
-				['v', static::ZIP_VERSION],				// Version needed to Extract
+				['v', static::ZIP_VERSION_64],			// Version needed to Extract
 				['v', 0b00001000],						// General purpose bit flags - data descriptor flag set
 				['v', $meth],							// Compression method
 				['V', $time],							// Timestamp (DOS Format)
@@ -717,8 +718,8 @@ class ZipStream {
 		{
 			$fields = [
 				['V', static::CDR_FILE_SIGNATURE],		// Central file header signature
-				['v', static::ZIP_VERSION],				// Made by version
-				['v', static::ZIP_VERSION],				// Extract by version
+				['v', static::ZIP_VERSION_64],			// Made by version
+				['v', static::ZIP_VERSION_64],			// Extract by version
 				['v', 0b00001000],						// General purpose bit flags - data descriptor flag set
 				['v', $meth],							// Compression method
 				['V', $time],							// Timestamp (DOS Format)
@@ -793,8 +794,8 @@ class ZipStream {
 		$fields = [
 			['V', static::ZIP64_CDR_EOF_SIGNATURE], 	// ZIP64 end of central file header signature
 			['P', 44],									// Length of data below this header (length of block - 12) = 44
-			['v', static::ZIP_VERSION],					// Made by version
-			['v', static::ZIP_VERSION],					// Extract by version
+			['v', static::ZIP_VERSION_64],					// Made by version
+			['v', static::ZIP_VERSION_64],					// Extract by version
 			['V', 0x00], 								// disk number
 			['V', 0x00], 								// no of disks
 			['P', $num],								// no of entries on disk
