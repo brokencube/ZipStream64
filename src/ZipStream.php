@@ -254,7 +254,7 @@ class ZipStream {
 		$meth = static::METHOD_DEFLATE;
 		
 		// send file header
-		$hlen = $this->addFileHeader($crc, $zlen, $len);
+		$hlen = $this->addFileHeader($name, $opt, $meth);
 		
 		// print data
 		$this->send($zdata);
