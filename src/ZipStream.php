@@ -924,7 +924,17 @@ class ZipStream {
 		}
 		
 		if ($this->output_name) {
-			$disposition .= "; filename=\"{$this->output_name}\"";
+			// Various different browsers dislike various characters here. Strip them all for safety.
+			$safe_output = trim(str_replace(['"', "'", '\\', ';', "\n", "\r"], '', $this->output_name));
+			
+			// Check if we need to UTF-8 encode the filename
+            $urlencoded = rawurlencode($safe_output);
+            if ($urlencoded != $safe_output) {
+				$disposition .= "; filename*=UTF-8''{$safe_output}";
+			} else {
+				$disposition .= "; filename=\"{$safe_output}\"";	
+			}
+			
 		}
 		
 		$headers = array(
