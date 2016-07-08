@@ -929,12 +929,7 @@ class ZipStream {
 			
 			// Check if we need to UTF-8 encode the filename
             $urlencoded = rawurlencode($safe_output);
-            if ($urlencoded != $safe_output) {
-				$disposition .= "; filename*=UTF-8''{$safe_output}";
-			} else {
-				$disposition .= "; filename=\"{$safe_output}\"";	
-			}
-			
+			$disposition .= "; filename*=UTF-8''{$urlencoded}";
 		}
 		
 		$headers = array(
