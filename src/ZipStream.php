@@ -68,7 +68,8 @@ use brokencube\ZipStream\Exception as Ex;
  *   // write archive footer to stream
  *   $zip->finish();
  */
-class ZipStream {
+class ZipStream
+{
 	const VERSION = '0.2.0';
 	const ZIP_VERSION = 0x000A;	
 	const ZIP_VERSION_64 = 0x002D;
@@ -192,7 +193,8 @@ class ZipStream {
 	 * headers by default.  This behavior is to allow software to send its
 	 * own headers (including the filename), and still use this library.
 	 */
-	public function __construct($name = null, $opt = array()) {
+	public function __construct($name = null, $opt = array())
+	{
 
 		$defaults = array(
 			// set large file defaults: size = 20 megabytes
@@ -243,7 +245,8 @@ class ZipStream {
 	 *     'comment' => 'this is a comment about bar.jpg',
 	 *   ));
 	 */
-	public function addFile($name, $data, $opt = array()) {
+	public function addFile($name, $data, $opt = array())
+	{
 		// compress data
 		$zdata = gzdeflate($data);
 		
@@ -301,7 +304,8 @@ class ZipStream {
 	 * @throws \ZipStream\Exception\FileNotFoundException
 	 * @throws \ZipStream\Exception\FileNotReadableException
 	 */
-	public function addFileFromPath($name, $path, $opt = array()) {
+	public function addFileFromPath($name, $path, $opt = array())
+	{
 		if(!is_readable($path)) {
 			if(!file_exists($path)) {
 				throw new Ex\FileNotFoundException($path);
@@ -344,7 +348,8 @@ class ZipStream {
 	 *
 	 * @return void
 	 */
-	public function addFileFromStream($name, $stream, $opt = array()) {
+	public function addFileFromStream($name, $stream, $opt = array())
+	{
 		$block_size = 1048576; // process in 1 megabyte chunks
 		$algo       = 'crc32b';
 		$meth       = static::METHOD_STORE;
@@ -396,7 +401,8 @@ class ZipStream {
 	 *
 	 * @return void
 	 */
-	public function addFileFromPsr7Stream($name, \Psr\Http\Message\StreamInterface $stream, $opt = array()) {
+	public function addFileFromPsr7Stream($name, \Psr\Http\Message\StreamInterface $stream, $opt = array())
+	{
 		$block_size = 1048576; // process in 1 megabyte chunks
 		$algo       = 'crc32b';
 		$meth       = static::METHOD_STORE;
@@ -440,7 +446,8 @@ class ZipStream {
 	 * 
 	 * @return void
 	 */
-	public function finish() {
+	public function finish()
+	{
 		// add trailing cdr file records
 		foreach ($this->files as $file) $this->addCdrFile($file);
 
@@ -469,7 +476,8 @@ class ZipStream {
 	 * @param Integer $len
 	 * @return void
 	 */
-	protected function addFileHeader($name, $opt, $meth) {
+	protected function addFileHeader($name, $opt, $meth)
+	{
 		// strip leading slashes from file name
 		// (fixes bug in windows archive viewer)
 		$name = preg_replace('/^\\/+/', '', $name);
@@ -590,7 +598,8 @@ class ZipStream {
 	 * @return void
 	 * @throws \ZipStream\Exception\InvalidOptionException
 	 */
-	protected function addLargeFile($name, $path, $opt = array()) {
+	protected function addLargeFile($name, $path, $opt = array())
+	{
 		$st         = stat($path);
 		$block_size = 1048576; // process in 1 megabyte chunks
 		$algo       = 'crc32b';
@@ -668,7 +677,8 @@ class ZipStream {
 	 * @param string $path
 	 * @return Boolean
 	 */
-	protected function isLargeFile($path) {
+	protected function isLargeFile($path)
+	{
 		$st = stat($path);
 		return ($this->opt[self::OPTION_LARGE_FILE_SIZE] > 0) && ($st['size'] > $this->opt[self::OPTION_LARGE_FILE_SIZE]);
 	}
@@ -705,7 +715,8 @@ class ZipStream {
 	 * @param array $args
 	 * @return void
 	 */
-	protected function addCdrFile($args) {
+	protected function addCdrFile($args)
+	{
 		list($name, $opt, $meth, $crc, $zlen, $len, $offset) = $args;
 		
 		// get attributes
@@ -786,7 +797,8 @@ class ZipStream {
 	 * @param array $opt
 	 * @return void
 	 */
-	protected function addCdr64Eof($opt = null) {
+	protected function addCdr64Eof($opt = null)
+	{
 		$num     = count($this->files);
 		$cdr_length = $this->cdr_ofs;
 		$cdr_offset = $this->ofs;
@@ -814,7 +826,8 @@ class ZipStream {
 	 * @param array $opt
 	 * @return void
 	 */
-	protected function addCdr64Locator($opt = null) {
+	protected function addCdr64Locator($opt = null)
+	{
 		$num     = count($this->files);
 		$cdr_length = $this->cdr_ofs;
 		$cdr_offset = $this->ofs;
@@ -836,7 +849,8 @@ class ZipStream {
 	 * @param array $opt
 	 * @return void
 	 */
-	protected function addCdrEof($opt = null) {
+	protected function addCdrEof($opt = null)
+	{
 		$num     = count($this->files);
 		$cdr_len = $this->cdr_ofs;
 		$cdr_ofs = $this->ofs;
@@ -884,7 +898,8 @@ class ZipStream {
 	 * @param array $opt
 	 * @return void
 	 */
-	protected function addCdr($opt = null) {
+	protected function addCdr($opt = null)
+	{
 		foreach ($this->files as $file) $this->addCdrFile($file);
 		$this->addCdrEof($opt);
 	}
@@ -895,7 +910,8 @@ class ZipStream {
 	 * 
 	 * @return void
 	 */
-	protected function clear() {
+	protected function clear()
+	{
 		$this->files   = array();
 		$this->ofs     = 0;
 		$this->cdr_ofs = 0;
@@ -907,7 +923,8 @@ class ZipStream {
 	 * 
 	 * @return void
 	 */
-	protected function sendHttpHeaders() {
+	protected function sendHttpHeaders()
+	{
 		// grab options
 		$opt = $this->opt;
 		
@@ -951,7 +968,8 @@ class ZipStream {
 	 * @param String $str
 	 * @return void
 	 */
-	protected function send($str) {
+	protected function send($str)
+	{
 		if ($this->need_headers) {
 			$this->sendHttpHeaders();
 		}
@@ -966,7 +984,8 @@ class ZipStream {
 	 * @param Integer $when
 	 * @return Integer DOS Timestamp
 	 */
-	protected final function dostime($when) {
+	protected final function dostime($when)
+	{
 		// get date array for timestamp
 		$d = getdate($when);
 		
@@ -996,7 +1015,8 @@ class ZipStream {
 	 * @param array $fields
 	 * @return string
 	 */
-	protected function packFields($fields) {
+	protected function packFields($fields)
+	{
 		$fmt = '';
 		$args = [];
 		
