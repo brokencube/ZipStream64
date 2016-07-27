@@ -247,6 +247,8 @@ class ZipStream
 	 */
 	public function addFile($name, $data, $opt = array())
 	{
+		$name = $this->filterFilename($name);
+		
 		// compress data
 		$zdata = gzdeflate($data);
 		
@@ -306,6 +308,8 @@ class ZipStream
 	 */
 	public function addFileFromPath($name, $path, $opt = array())
 	{
+		$name = $this->filterFilename($name);
+				
 		if(!is_readable($path)) {
 			if(!file_exists($path)) {
 				throw new Ex\FileNotFoundException($path);
@@ -350,6 +354,8 @@ class ZipStream
 	 */
 	public function addFileFromStream($name, $stream, $opt = array())
 	{
+		$name = $this->filterFilename($name);
+		
 		$block_size = 1048576; // process in 1 megabyte chunks
 		$algo       = 'crc32b';
 		$meth       = static::METHOD_STORE;
@@ -403,6 +409,8 @@ class ZipStream
 	 */
 	public function addFileFromPsr7Stream($name, \Psr\Http\Message\StreamInterface $stream, $opt = array())
 	{
+		$name = $this->filterFilename($name);
+		
 		$block_size = 1048576; // process in 1 megabyte chunks
 		$algo       = 'crc32b';
 		$meth       = static::METHOD_STORE;
@@ -1031,5 +1039,16 @@ class ZipStream
 		
 		// build output string from header and compressed data
 		return call_user_func_array('pack', $args);
+	}
+	
+	/**
+	 * Strip characters that are not legal in Windows filenames to prevent compatability issues
+	 * 
+	 * @param string $filename Unprocessed filename
+	 * @return string
+	 */
+	protected function filterFilename($filename)
+	{
+		return str_replace(['\\', ':', '*', '?', '"', '<', '>', '|'], '_', $filename);
 	}
 }
