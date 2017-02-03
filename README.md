@@ -36,6 +36,11 @@ fwrite($fp, 'The quick brown fox jumped over the lazy dog.');
 $zip->addFileFromStream('goodbye.txt', $fp);
 fclose($fp);
 
+# add a file named 'farewell.txt' from a PSR7 stream (e.g. Guzzle / AWS)
+$amazonS3 = new Sdk()->createS3();
+$file = $amazonS3->getObject(['Bucket' => 'bucket.name', 'Key' => 'path/to/farewell.txt']);
+$zip->addFileFromPsr7Stream('farewell.txt', $file['Body']);
+
 # finish the zip stream
 $zip->finish();
 ```
