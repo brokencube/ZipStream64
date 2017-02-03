@@ -16,11 +16,13 @@ Easiest installation is via Composer:
 A fast and simple streaming zip file downloader for PHP.  Here's a
 simple example:
 ```php
+use brokencube\ZipStream\ZipStream;
+
 # Autoload the dependencies
 require 'vendor/autoload.php';
 
 # create a new zipstream object
-$zip = new ZipStream\ZipStream('example.zip');
+$zip = new ZipStream('example.zip');
 
 # create a file named 'hello.txt' 
 $zip->addFile('hello.txt', 'This is the contents of hello.txt');
@@ -49,3 +51,10 @@ This project leans *very* heavily on previous work of the following projects:
   * https://github.com/barracudanetworks/ArchiveStream-php
 
 95% of kudos for this project goes to them!
+
+## Some Caveats
+
+64bit Zips don't work properly with macOS's default Zip library (i.e. used by the built-in unarchive). If you need >4GB Zips on mac, your users will need to use 3rd party software to unzip them. If your zip is going to be smaller, you can turn off 64bit support by calling:
+```php
+$zip = new ZipStream('example.zip', [ZipStream::OPTION_USE_ZIP64 => false]);
+```
