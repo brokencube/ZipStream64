@@ -1,3 +1,9 @@
+# *DEPRECATED*
+
+The enhancements in this fork of https://github.com/maennchen/ZipStream-PHP have now been brought back into that project as of v1.0.0 - However, if you need PHP 5.6 / 7.0 (Which you shouldn't - those PHP versions are about to die!), this repo is still available.
+
+------
+
 # ZipStream64
 Streaming Zips with 64bit large file support
 
